@@ -1,9 +1,6 @@
-.PHONY: dependencies
-dependencies:
-	python -m venv venv
-	venv/bin/pip install -r requirements.txt
+include $(PWD)/../dependencies.mk
 
-.PHONY: problem-1
+.PHONY: problem-2
 problem-1: dependencies
 	venv/bin/python problem-2.py
 
