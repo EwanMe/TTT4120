@@ -8,9 +8,23 @@ def Y(omega, M):
 
 def subtask_b() -> None:
     M = 10
-    print(1 * (M + 1 / 2))
     plt.plot([Y(x, M) for x in np.linspace(-np.pi, np.pi, 1000)])
     plt.show()
+
+
+def x(n):
+    if n == 0:
+        return 2
+    if abs(n) == 1:
+        return 1
+    return 0
+
+
+def z(n):
+    N = 4
+
+    r = range(-1000, 1000)
+    return sum([x(n - l * N) for l in r])
 
 
 def main() -> None:
