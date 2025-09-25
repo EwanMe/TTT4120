@@ -8,3 +8,6 @@ problem-3: dependencies
 LFshelving: dependencies
 	venv/bin/python LFshelving.py
 
+.PHONY: problem-4
+problem-4: dependencies
+	venv/bin/python problem-4.py
