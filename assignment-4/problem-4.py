@@ -1,64 +1,9 @@
-from typing import Any
-
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.signal
 
-
-def subtask_a():
-    L = 500
-    A_x = A_y = 0.25
-    f_x = 0.04
-    f_y = 0.10
-    NFFT = 2048
-    n = np.arange(L)
-    d = A_x * np.cos(2 * np.pi * f_x * n) + A_y * np.cos(2 * np.pi * f_y * n)
-    e = np.random.normal(size=L)
-    g = d + e
-
-    return g
-
-    plt.title("d[n]")
-    ax1 = plt.subplot()
-    ax1.figure.set_size_inches(15, 5)
-    ax1.plot(d)
-    ax1.set_ylabel("d[n]")
-    ax1.set_xlabel("n")
-    ax1.grid(True)
-    plt.show()
-
-    plt.title("g[n]")
-    ax2 = plt.subplot()
-    ax2.figure.set_size_inches(15, 5)
-    ax2.plot(g)
-    ax2.set_ylabel("g[n]")
-    ax2.set_xlabel("n")
-    ax2.grid(True)
-    plt.show()
-
-    D = np.fft.fft(d, n=NFFT)
-    f = np.arange(NFFT) / NFFT
-
-    magD = np.abs(D) / L
-
-    plt.figure(figsize=(12, 5))
-    plt.subplot()
-    plt.plot(f[: NFFT // 2], magD[: NFFT // 2])
-    plt.title("Magnitude |D(f)|")
-    plt.xlabel("f")
-    plt.xticks(np.arange(0, 0.51, 0.02))
-    plt.show()
-
-    G = np.fft.fft(g, n=NFFT)
-    magG = np.abs(G) / L
-    plt.figure(figsize=(12, 5))
-    plt.subplot()
-    plt.plot(f[: NFFT // 2], magG[: NFFT // 2])
-    plt.title("Magnitude |G(f)|")
-    plt.xlabel("f")
-    plt.show()
-
-    return g
+L = 500
+N = np.arange(L)
 
 
 def plot_signal(x, title, y_label, x_label):
@@ -101,7 +46,6 @@ def plot_frequency_response(w, h, title):
 
 
 def plot_signal_freq_rsp(x, title: str):
-    L = 500
     NFFT = 2048
 
     f = np.arange(NFFT) / NFFT
@@ -114,10 +58,30 @@ def plot_signal_freq_rsp(x, title: str):
     plt.xlabel("f")
     plt.show()
 
-    return f, mag
+
+def d():
+    A_x = A_y = 0.25
+    f_x = 0.04
+    f_y = 0.10
+    return A_x * np.cos(2 * np.pi * f_x * N) + A_y * np.cos(2 * np.pi * f_y * N)
 
 
-def subtask_b_c_d(g: np.ndarray[tuple[Any, ...], np.dtype[np.float64]]):
+def e():
+    return np.random.normal(size=L)
+
+
+def g():
+    return d() + e()
+
+
+def subtask_a():
+    plot_signal(d(), "d[n]", "d[n]", "n")
+    plot_signal(g(), "g[n]", "g[n]", "n")
+    plot_signal_freq_rsp(d(), "Magnitude |D(f)|")
+    plot_signal_freq_rsp(g(), "Magnitude |G(f)|")
+
+
+def subtask_b_c_d():
     # subtask b
     b = np.poly([-1, 1])
     r = 0.99
@@ -130,27 +94,23 @@ def subtask_b_c_d(g: np.ndarray[tuple[Any, ...], np.dtype[np.float64]]):
     y_poles = np.roots(ay)
     x_poles = np.roots(ax)
 
-    # plot_poles_and_zeroes(x_poles, zeroes, "h_x poles and zeroes")
+    plot_poles_and_zeroes(x_poles, zeroes, "H_x poles and zeroes")
+    plot_poles_and_zeroes(y_poles, zeroes, "H_y poles and zeroes")
 
     wx, hx = scipy.signal.freqz(b, ax)
-    # plot_frequency_response(wx, hx, "|H_x(f)|")
+    plot_frequency_response(wx, hx, "|H_x(f)|")
 
-    # plot_poles_and_zeroes(y_poles, zeroes, "h_y poles and zeroes")
     wy, hy = scipy.signal.freqz(b, ay)
-    # plot_frequency_response(wy, hy, "|H_y(f)|")
+    plot_frequency_response(wy, hy, "|H_y(f)|")
 
     # subtask c
-    qx = scipy.signal.lfilter(b, ax, g)
-    qy = scipy.signal.lfilter(b, ay, g)
-    # plot_signal(qx, "q_x[n]", "q_x[n]", "n")
-    # plot_signal(qy, "q_y[n]", "q_y[n]", "n")
+    qx = scipy.signal.lfilter(b, ax, g())
+    qy = scipy.signal.lfilter(b, ay, g())
+    plot_signal(qx, "q_x[n]", "q_x[n]", "n")
+    plot_signal(qy, "q_y[n]", "q_y[n]", "n")
 
-    wqx, hqx = scipy.signal.freqz(b, ax)
-    # plot_signal_freq_rsp(qx)
-    # plot_frequency_response(wqx, hqx, "|Q_x(f)|")
-    wqy, hqy = scipy.signal.freqz(b, ay)
-    # plot_signal_freq_rsp(qy)
-    # plot_frequency_response(wqy, hqy, "|Q_y(f)|")
+    plot_signal_freq_rsp(qx, "|Q_x(f)|")
+    plot_signal_freq_rsp(qy, "|Q_y(f)|")
 
     # subtask d
     x_poles_plus_y_poles = np.roots(np.poly(x_poles) + np.poly(y_poles))
@@ -161,14 +121,14 @@ def subtask_b_c_d(g: np.ndarray[tuple[Any, ...], np.dtype[np.float64]]):
 
     plot_poles_and_zeroes(poles, zeroes, "q poles and zeroes")
 
-    q = scipy.signal.lfilter(np.poly(zeroes), np.poly(poles), g)
+    q = scipy.signal.lfilter(np.poly(zeroes), np.poly(poles), g())
     plot_signal(q, "q[n]", "q[n]", "n")
     plot_signal_freq_rsp(q, "Magnitude of q[n]")
 
 
 def main():
-    g = subtask_a()
-    subtask_b_c_d(g)
+    subtask_a()
+    subtask_b_c_d()
 
 
 if __name__ == "__main__":
