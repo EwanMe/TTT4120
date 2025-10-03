@@ -1,26 +1,29 @@
 import scipy.signal
-from scipy.io.wavfile import read
-from scipy.signal import lfilter, freqz
+import scipy.io
 import matplotlib.pyplot as plt
 import numpy as np
 import sounddevice as sd
 
 
-def subtask_c():
-    R = 1000
-    alpha = 0.9
-    fs = 22050
-    N = 2000
-
+def transfer_func(alpha, R):
     b = np.zeros(R + 1)
     b[0] = 1.0
     b[R] = alpha
     a = np.zeros(R + 1)
     a[0] = 1
+    return b, a
+
+
+def subtask_c():
+    N = 20
+    R = 10
+    alpha = 0.9
+
+    b, a = transfer_func(alpha, R)
 
     lti = scipy.signal.dlti(b, a)
     _, h = scipy.signal.dimpulse(lti, n=N)
-    w, H = scipy.signal.freqz(b, a, worN=1024, fs=fs)
+    w, H = scipy.signal.freqz(b, a, worN=1024)
 
     plt.title("Frequency responses")
     ax = plt.subplot()
@@ -39,29 +42,21 @@ def subtask_c():
     ax.grid(True)
     plt.show()
 
-    return b, a
 
+def subtask_d():
+    fs, x = scipy.io.wavfile.read("piano.wav")
 
-def subtask_d(b, a):
-    fs, x = read("piano.wav")
+    b, a = transfer_func(0.7, 2000)
+    y = scipy.signal.lfilter(b, a, x)
 
-    y = lfilter(b, a, x)
-
-    print("Playing *original* sound clip")
-    xscaled = x / np.max(x)
-    sd.play(xscaled, fs)  # play original sound
-
-    input("Press a key to continue...")
-
-    print("Playing *filtered* sound clip")
     yscaled = y / np.max(y)
     sd.play(yscaled, fs)
     sd.wait()
 
 
 def main():
-    b, a = subtask_c()
-    subtask_d(b, a)
+    subtask_c()
+    subtask_d()
 
 
 if __name__ == "__main__":
