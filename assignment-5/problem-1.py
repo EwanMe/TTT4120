@@ -19,7 +19,7 @@ def plot(functions: list, names: list, y_label, x_label):
     ax1.figure.set_size_inches(15, 5)
 
     for i in range(len(functions)):
-        ax1.plot(functions[i], label=names[i])
+        ax1.stem(functions[i], label=names[i], linefmt=f"C{i}-")
 
     ax1.set_ylabel(y_label)
     ax1.set_xlabel(x_label)
