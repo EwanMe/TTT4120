@@ -15,6 +15,7 @@ def r_xx(l, a):
 
 
 def plot(functions: list, names: list, y_label, x_label):
+    plt.title(y_label)
     ax1 = plt.subplot()
     ax1.figure.set_size_inches(15, 5)
 
