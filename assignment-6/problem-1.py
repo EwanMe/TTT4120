@@ -12,7 +12,6 @@ def X_f(N):
 
 def plot_dft(X, title: str, yax: str, xax: str):
     plt.subplot()
-    plt.title(title)
     plt.stem(X)
     plt.title(title)
     plt.ylabel(yax)
