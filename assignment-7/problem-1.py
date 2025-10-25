@@ -136,7 +136,7 @@ def problem_2_subtask_c(run: int):
 
 def problem_2_subtask_d(run: int):
     N = 20000
-    x = scipy.signal.lfilter([1], [1, 1 / 2], white_gaussian_noise(N))
+    x = scipy.signal.lfilter([1], [1, 1 / 2], white_gaussian_noise(N, 3 / 4))
 
     for K in [10, 100]:
         L = N // K
@@ -163,6 +163,27 @@ def problem_2_subtask_d(run: int):
         plt.show()
 
 
+def problem_3():
+    N = 20000
+    num_segments = 200
+    x = scipy.signal.lfilter([1], [1, 1 / 2], white_gaussian_noise(N, 3 / 4))
+
+    for K in [20, 40, 100]:
+        segments = x[: num_segments * K].reshape(num_segments, K)
+
+        means = [np.mean(segment) for segment in segments]
+
+        plt.title(f"Problem 3: Mean, K={K}")
+        plt.hist(means, 20)
+        plt.show()
+
+        vars = [np.var(segment) for segment in segments]
+
+        plt.title(f"Problem 3: Variance, K={K}")
+        plt.hist(vars, 20)
+        plt.show()
+
+
 def main() -> None:
     problem_1_subtask_a()
     problem_1_subtask_c()
@@ -171,6 +192,8 @@ def main() -> None:
 
     for i in range(1, 4):
         problem_2_subtask_d(i)
+
+    problem_3()
 
 
 if __name__ == "__main__":
