@@ -134,11 +134,43 @@ def problem_2_subtask_c(run: int):
     plt.show()
 
 
+def problem_2_subtask_d(run: int):
+    N = 20000
+    x = scipy.signal.lfilter([1], [1, 1 / 2], white_gaussian_noise(N))
+
+    for K in [10, 100]:
+        L = N // K
+        freqs, psd = scipy.signal.welch(
+            x,
+            noverlap=0,
+            nperseg=L,
+            return_onesided=True,
+        )
+
+        plt.semilogx(freqs, normalize(psd), label=f"Bartlett K={K}")
+        plt.semilogx(
+            freqs,
+            normalize(Gamma(2 * np.pi * freqs)),
+            "C2",
+            linewidth=3,
+            label="Theoretical",
+        )
+        plt.title(f"Run {run}: Power spectral density")
+        plt.xlabel("Frequency")
+        plt.ylabel("Power")
+        plt.legend()
+        plt.tight_layout()
+        plt.show()
+
+
 def main() -> None:
     problem_1_subtask_a()
     problem_1_subtask_c()
     for i in range(1, 4):
         problem_2_subtask_c(i)
+
+    for i in range(1, 4):
+        problem_2_subtask_d(i)
 
 
 if __name__ == "__main__":
