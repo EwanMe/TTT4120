@@ -106,7 +106,7 @@ def Gamma(w: npt.NDArray):
     return normalize(G)
 
 
-def problem_2_subtask_c():
+def problem_2_subtask_c(run: int):
     N = 20000
     w = white_gaussian_noise(N, 3 / 4)
     x = scipy.signal.lfilter([1], [1, 1 / 2], w)
@@ -116,17 +116,17 @@ def problem_2_subtask_c():
     e_ac = ac_range(x, r)
     nfft = 50
     e_pds = normalize(scipy.fft.fftshift(scipy.fft.fft(e_ac, n=nfft)))
-    print(f"Mean: {e_mean}")
+    print(f"Run {run}: Mean={e_mean}")
 
     ax = plt.subplot()
-    plt.title("Autocorrelation")
+    plt.title(f"Run {run}: Autocorrelation")
     ax.plot(r, normalize(y_xx(r)), "C2", linewidth=3, label="Theoretical")
     ax.stem(r, normalize(e_ac), label="Estimated")
     ax.legend()
     plt.show()
 
     omega = np.linspace(-np.pi, np.pi, nfft, endpoint=False)
-    plt.title("Power density spectrum")
+    plt.title(f"Run {run}: Power density spectrum")
     ax = plt.subplot()
     ax.plot(omega, Gamma(omega), "C2", linewidth=3, label="Theoretical")
     ax.stem(omega, np.abs(e_pds), label="Estimated")
@@ -137,7 +137,8 @@ def problem_2_subtask_c():
 def main() -> None:
     problem_1_subtask_a()
     problem_1_subtask_c()
-    problem_2_subtask_c()
+    for i in range(1, 4):
+        problem_2_subtask_c(i)
 
 
 if __name__ == "__main__":
