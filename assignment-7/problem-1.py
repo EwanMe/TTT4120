@@ -93,16 +93,17 @@ def problem_1_subtask_c() -> None:
     )
 
 
+def normalize(x: npt.NDArray) -> npt.NDArray:
+    return x / np.max(x)
+
+
 def y_xx(r: npt.NDArray):
     return 3 / 4 * (-1 / 2) ** np.abs(r)
 
 
-# def Gamma(f: float):
-#     return 9 / 16 * 1 / ((1 + 1 / 2 * f**-1) * (1 + 1 / 2 * f))
-
-
 def Gamma(w: npt.NDArray):
-    return 9 / 16 * 1 / ((5 / 4) + np.cos(w))
+    G = 9 / 16 * 1 / ((5 / 4) + np.cos(w))
+    return normalize(G)
 
 
 def problem_2_subtask_c():
@@ -113,30 +114,29 @@ def problem_2_subtask_c():
     r = np.arange(-10, 11)
     e_mean = np.mean(x)
     e_ac = ac_range(x, r)
-    e_pds = scipy.fft.fft(e_ac, n=200, norm="forward")
-
+    nfft = 50
+    e_pds = normalize(scipy.fft.fftshift(scipy.fft.fft(e_ac, n=nfft)))
     print(f"Mean: {e_mean}")
-    # plot(y_xx(r), e_ac, x=r, title="Autocorrelation")
-
-    # plot(e_pds, Gamma(r), r, title="PDS")
 
     ax = plt.subplot()
-    print(np.abs(e_pds))
-    l = np.arange(-5, 5)
-    ax.stem(np.abs(e_pds))
+    plt.title("Autocorrelation")
+    ax.plot(r, normalize(y_xx(r)), "C2", linewidth=3, label="Theoretical")
+    ax.stem(r, normalize(e_ac), label="Estimated")
+    ax.legend()
     plt.show()
 
-    # freqs, times, spectrogram = scipy.signal.spectrogram(x)
-    # ax = plt.subplot()
-    # ax.imshow(spectrogram, aspect="auto", cmap="hot_r", origin="lower")
-    # plt.title("Spectrogram")
-    # plt.tight_layout()
-    # plt.show()
+    omega = np.linspace(-np.pi, np.pi, nfft, endpoint=False)
+    plt.title("Power density spectrum")
+    ax = plt.subplot()
+    ax.plot(omega, Gamma(omega), "C2", linewidth=3, label="Theoretical")
+    ax.stem(omega, np.abs(e_pds), label="Estimated")
+    ax.legend()
+    plt.show()
 
 
 def main() -> None:
-    # problem_1_subtask_a()
-    # problem_1_subtask_c()
+    problem_1_subtask_a()
+    problem_1_subtask_c()
     problem_2_subtask_c()
 
 
