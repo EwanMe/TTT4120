@@ -1,26 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import numpy.typing as npt
-
-
-def w(size: int):
-    mean = 0
-    std = 1
-    return np.random.normal(mean, std, size=size + 1)
-
-
-def stem(x, n: int = 10):
-    r = np.arange(-n, n + 1)
-
-    ax = plt.subplot()
-    plt.title("Autocorrelation")
-    ax.stem(
-        r,
-        x[len(x) // 2 + r[0] : len(x) // 2 + r[-1] + 1],
-        label="Estimated",
-    )
-    ax.legend()
-    plt.show()
+import scipy.signal
 
 
 def cnt_pad_gamma(gamma: npt.NDArray, *, order: int):
@@ -55,11 +36,6 @@ def prediction_error_variance(gamma, coeff, order):
 
 
 def subtask_c():
-    n = np.array(10000)
-    w_n = w(n + 1)
-    x = w_n[1:] - 0.5 * w_n[:-1]
-    gamma = np.correlate(x, x, "full") / n
-
     gamma = [-1 / 2, 5 / 4, -1 / 2]
 
     for order in [1, 2, 3]:
@@ -67,6 +43,20 @@ def subtask_c():
         pev = prediction_error_variance(gamma, coefficients, order=order)
         print(f"Order={order}:\n", coefficients)
         print(f"Prediction error variance={pev}")
+
+        a = np.concat([[1], coefficients])
+        w, H = scipy.signal.freqz([1], a)
+        f = w / (2 * np.pi)
+        psd_estimate = 1 / (np.abs(H) ** 2)
+
+        psd_theoretical = 5 / 4 - np.cos(2 * np.pi * f)
+
+        ax = plt.subplot()
+        plt.title("Autocorrelation")
+        ax.plot(f, psd_estimate, label="Estimated")
+        ax.plot(f, psd_theoretical, label="Theoretical")
+        ax.legend()
+        plt.show()
 
 
 def main():
