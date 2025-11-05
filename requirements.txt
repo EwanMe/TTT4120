@@ -1,6 +1,9 @@
 matplotlib
 numpy
 PyQt5
+pysptk
 scipy
+setuptools
+soundfile
 sounddevice
 statsmodels

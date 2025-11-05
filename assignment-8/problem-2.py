@@ -14,7 +14,7 @@ def cnt_pad_gamma(gamma: npt.NDArray, *, order: int):
 
 def yule_walker(gamma: npt.NDArray, *, order: int):
     if len(gamma) % 2 == 0:
-        raise ValueError("Autocorrelation sequence must be of odd lenght")
+        raise ValueError("Autocorrelation sequence must be of odd length")
 
     centered_g = cnt_pad_gamma(gamma, order=order)
     R = np.zeros([order, order])
@@ -52,7 +52,7 @@ def subtask_c():
         psd_theoretical = 5 / 4 - np.cos(2 * np.pi * f)
 
         ax = plt.subplot()
-        plt.title("Autocorrelation")
+        plt.title("Power spectrum density")
         ax.plot(f, psd_estimate, label="Estimated")
         ax.plot(f, psd_theoretical, label="Theoretical")
         ax.legend()
