@@ -3,7 +3,7 @@ numpy
 PyQt5
 pysptk
 scipy
-setuptools
+setuptools<81
 soundfile
 sounddevice
 statsmodels
