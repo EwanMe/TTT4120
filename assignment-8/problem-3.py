@@ -7,22 +7,20 @@ import pysptk.sptk
 import numpy as np
 
 
-def transform_vowel(source, target, sample_rate: int):
+def transform_vowel(source, target):
     order = 10
-    a_src = pysptk.sptk.lpc(source, order=order)
-    a_trg = pysptk.sptk.lpc(target, order=order)
+    a_src = pysptk.sptk.lpc(source / np.max(source), order=order)
+    a_trg = pysptk.sptk.lpc(target / np.max(target), order=order)
 
-    a_src = np.concatenate(([1.0], -a_src[1:] / a_src[0]))
-    a_trg = np.concatenate(([1.0], -a_trg[1:] / a_trg[0]))
+    a_s_0 = a_src[0]
+    a_t_0 = a_trg[0]
 
-    residual = sig.lfilter(a_src, [1.0], source)
+    a_src[0] = 1
+    a_trg[0] = 1
 
-    out = sig.lfilter([1.0], a_trg, residual)
-    print(out)
+    residual = sig.lfilter(a_src, [a_s_0], source)
 
-    sf.write("debug_out.wav", out, sample_rate)
-    sd.play(out, sample_rate)
-    sd.wait()
+    return sig.lfilter([a_t_0], a_trg, residual)
 
 
 def main():
@@ -31,21 +29,30 @@ def main():
     sample_rate = int(mat["fs"][0][0])
     vowels = mat["v"][0]
 
-    a = vowels[0].squeeze()
-    e = vowels[1].squeeze()
-    i = vowels[2].squeeze()
+    # a = vowels[0].squeeze()
+    # e = vowels[1].squeeze()
+    # i = vowels[2].squeeze()
+    # o = vowels[3].squeeze()
+    # u = vowels[4].squeeze()
+    # y = vowels[5].squeeze()
+    # æ = vowels[6].squeeze()
+    # ø = vowels[7].squeeze()
+    # å = vowels[8].squeeze()
 
     my_aaa, sr = sf.read("aaa.wav")
 
     if sr != sample_rate:
         raise RuntimeError("Sample rate mismatch")
 
-    # recording = sd.rec(int(5 * sample_rate), samplerate=sample_rate, channels=1)
-    # sd.wait()
-    # sd.play(recording, sample_rate)
-    # sd.wait()
+    sd.play(my_aaa, samplerate=sample_rate)
+    sd.wait()
 
-    transform_vowel(my_aaa, i, sample_rate)
+    for i in range(9):
+        vowel = vowels[i].squeeze()
+        out = transform_vowel(my_aaa, vowel)
+
+        sd.play(out, sample_rate)
+        sd.wait()
 
 
 if __name__ == "__main__":
