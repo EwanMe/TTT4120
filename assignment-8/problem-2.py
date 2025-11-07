@@ -35,7 +35,7 @@ def prediction_error_variance(gamma, coeff, order):
     )
 
 
-def subtask_c():
+def subtask_c_d():
     gamma = [-1 / 2, 5 / 4, -1 / 2]
 
     for order in [1, 2, 3]:
@@ -45,7 +45,7 @@ def subtask_c():
         print(f"Prediction error variance={pev}")
 
         a = np.concat([[1], coefficients])
-        w, H = scipy.signal.freqz([1], a)
+        w, H = scipy.signal.freqz(a, [1])
         f = w / (2 * np.pi)
         psd_estimate = 1 / (np.abs(H) ** 2)
 
@@ -53,14 +53,14 @@ def subtask_c():
 
         ax = plt.subplot()
         plt.title("Power spectrum density")
-        ax.plot(f, psd_estimate, label="Estimated")
+        ax.plot(f, psd_estimate, label=f"Estimated AR({order})")
         ax.plot(f, psd_theoretical, label="Theoretical")
         ax.legend()
         plt.show()
 
 
 def main():
-    subtask_c()
+    subtask_c_d()
 
 
 if __name__ == "__main__":
