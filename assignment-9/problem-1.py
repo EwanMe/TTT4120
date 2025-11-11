@@ -28,7 +28,24 @@ def subtask_d():
         w, H = sig.freqz(h(n, cutoff_freq, window), worN=1024)
 
         ax = plt.subplot()
-        ax.set_title(name)
+        ax.set_title(f"Problem 1 (d): {name}")
+        ax.plot(w / (2 * np.pi), amp_to_dB(np.abs(H)))
+        ax.set_ylabel("dB")
+        ax.set_xlabel("f")
+        plt.show()
+
+
+def subtask_e():
+    N = 31
+    cutoff = 0.2
+    norm_factor = 2
+    for window in ["boxcar", "hamming"]:
+        h_N = sig.firwin(N, cutoff * norm_factor, window=window)
+
+        w, H = sig.freqz(h_N, worN=1024)
+
+        ax = plt.subplot()
+        ax.set_title(f"Problem 1 (e): {window.capitalize()}")
         ax.plot(w / (2 * np.pi), amp_to_dB(np.abs(H)))
         ax.set_ylabel("dB")
         ax.set_xlabel("f")
@@ -37,6 +54,7 @@ def subtask_d():
 
 def main():
     subtask_d()
+    subtask_e()
 
 
 if __name__ == "__main__":
