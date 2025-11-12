@@ -4,10 +4,6 @@ import numpy.typing as npt
 import scipy.signal as sig
 
 
-def amp_to_dB(amp: npt.NDArray) -> npt.NDArray:
-    return 20 * np.log10(amp)
-
-
 def h(n: npt.NDArray, f_c: float, w: npt.NDArray) -> npt.NDArray[np.float64]:
     if len(n) != len(w):
         raise ValueError("n and w must be of equal length")
@@ -29,7 +25,7 @@ def subtask_d():
 
         ax = plt.subplot()
         ax.set_title(f"Problem 1 (d): {name}")
-        ax.plot(w / (2 * np.pi), amp_to_dB(np.abs(H)))
+        ax.plot(w / (2 * np.pi), np.abs(H))
         ax.set_ylabel("dB")
         ax.set_xlabel("f")
         plt.show()
@@ -46,7 +42,7 @@ def subtask_e():
 
         ax = plt.subplot()
         ax.set_title(f"Problem 1 (e): {window.capitalize()}")
-        ax.plot(w / (2 * np.pi), amp_to_dB(np.abs(H)))
+        ax.plot(w / (2 * np.pi), np.abs(H))
         ax.set_ylabel("dB")
         ax.set_xlabel("f")
         plt.show()
